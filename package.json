@@ -1,0 +1,10 @@
+{
+  "name": "chatgpt-todo-app",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build": "npm run build -w @todo/core && npm run build -w api",
+    "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w web"
+  }
+}
