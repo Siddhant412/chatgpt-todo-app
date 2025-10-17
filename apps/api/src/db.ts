@@ -45,8 +45,20 @@ export function makeStore(db = openDb()) {
     },
 
     add(text: string): Todo {
-      const todo: Todo = { id: randomUUID(), text, done: false, createdAt: Date.now() };
-      insertStmt.run(todo);
+      const todo: Todo = {
+        id: randomUUID(),
+        text,
+        done: false,
+        createdAt: Date.now(),
+      };
+
+      insertStmt.run({
+        id: todo.id,
+        text: todo.text,
+        done: todo.done ? 1 : 0,
+        createdAt: todo.createdAt,
+      });
+
       return todo;
     },
 
