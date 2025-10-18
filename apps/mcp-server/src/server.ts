@@ -35,8 +35,7 @@ server.registerResource(
           mimeType: "text/html+skybridge",
           text: `
 <div id="root"><div style="font:14px/1.4 system-ui;padding:8px;color:#bbb">Widget shell loaded…</div></div>
-<script>${widgetJs}</script>`.trim(),
-          _meta: { "openai/widgetPrefersBorder": true }
+<script>${widgetJs}</script>`.trim()
         }
       ]
     };
@@ -61,70 +60,82 @@ const meta = {
 
 server.registerTool(
   "list_todos",
-  {
-    title: "List todos",
-    description: "Return all todos",
-    inputSchema: {},
-    outputSchema: { todos: ZTodos },
-    _meta: meta
+  { 
+    title: "List todos", 
+    description: "Return all todos", 
+    inputSchema: {}, 
+    outputSchema: { todos: ZTodos }, 
+    _meta: meta 
   },
-  async () => ({
-    content: [{ type: "text", text: "Fetched todos." }],
-    structuredContent: { todos: store.list() }
+  async () => ({ 
+    content: [{ type: "text", text: "Fetched todos." }], 
+    structuredContent: { todos: store.list() } 
   })
 );
 
 server.registerTool(
   "add_todo",
-  {
-    title: "Add todo",
-    description: "Add a new todo",
-    inputSchema: { text: z.string().min(1) },
-    outputSchema: { todos: ZTodos },
-    _meta: meta
+  { 
+    title: "Add todo", 
+    description: "Add a new todo", 
+    inputSchema: { text: z.string().min(1) }, 
+    outputSchema: { todos: ZTodos }, 
+    _meta: meta 
   },
-  async ({ text }) => {
-    store.add(text);
-    return {
-      content: [{ type: "text", text: `Added: ${text}` }],
-      structuredContent: { todos: store.list() }
-    };
+  async ({ text }) => { 
+    store.add(text); 
+    return { 
+      content: [{ type: "text", text: `Added: ${text}` }], 
+      structuredContent: { todos: store.list() } 
+    }; 
   }
 );
 
 server.registerTool(
   "toggle_todo",
-  {
-    title: "Toggle todo",
-    description: "Toggle done by id",
-    inputSchema: { id: z.string() },
-    outputSchema: { todos: ZTodos },
-    _meta: meta
+  { 
+    title: "Toggle todo", 
+    description: "Toggle done by id", 
+    inputSchema: { id: z.string() }, 
+    outputSchema: { todos: ZTodos }, 
+    _meta: meta 
   },
-  async ({ id }) => {
-    store.toggle(id);
-    return {
-      content: [{ type: "text", text: `Toggled: ${id}` }],
-      structuredContent: { todos: store.list() }
+  async ({ id }) => { 
+    store.toggle(id); 
+    return { 
+      content: [{ type: "text", text: `Toggled: ${id}` }], 
+      structuredContent: { todos: store.list() } 
     };
   }
 );
 
 server.registerTool(
+  "edit_todo",
+  { title: "Edit todo", description: "Edit text by id", inputSchema: { id: z.string(), text: z.string().min(1) }, outputSchema: { todos: ZTodos }, _meta: meta },
+  async ({ id, text }) => { store.edit(id, text); return { content: [{ type: "text", text: `Edited: ${id}` }], structuredContent: { todos: store.list() } }; }
+);
+
+server.registerTool(
+  "clear_completed",
+  { title: "Clear completed", description: "Remove all completed todos", inputSchema: {}, outputSchema: { todos: ZTodos }, _meta: meta },
+  async () => { store.clearCompleted(); return { content: [{ type: "text", text: "Cleared completed." }], structuredContent: { todos: store.list() } }; }
+);
+
+server.registerTool(
   "delete_todo",
-  {
+  { 
     title: "Delete todo",
-    description: "Delete by id",
-    inputSchema: { id: z.string() },
-    outputSchema: { todos: ZTodos },
-    _meta: meta
+    description: "Delete by id", 
+    inputSchema: { id: z.string() }, 
+    outputSchema: { todos: ZTodos }, 
+    _meta: meta 
   },
-  async ({ id }) => {
-    store.remove(id);
-    return {
-      content: [{ type: "text", text: `Deleted: ${id}` }],
-      structuredContent: { todos: store.list() }
-    };
+  async ({ id }) => { 
+    store.remove(id); 
+    return { 
+      content: [{ type: "text", text: `Deleted: ${id}` }], 
+      structuredContent: { todos: store.list() } 
+    }; 
   }
 );
 
